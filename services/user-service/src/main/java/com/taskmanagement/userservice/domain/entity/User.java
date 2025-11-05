@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -14,7 +15,8 @@ import java.util.UUID;
 @Table(name = "users")
 @Getter
 @Setter
-@SQLDelete(sql = "UPDATE roles SET deleted_at = NOW() WHERE id = ?") // Implement soft delete don't need write more code
+@SQLDelete(sql = "UPDATE users SET deleted_at = NOW() WHERE id = ?") // Implement soft delete don't need write more code
+@Where(clause = "deleted_at IS NULL")
 public class User {
 
     @Id

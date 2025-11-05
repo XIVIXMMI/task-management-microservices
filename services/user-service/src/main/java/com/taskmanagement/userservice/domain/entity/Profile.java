@@ -14,7 +14,7 @@ import java.util.UUID;
 @Table(name = "profiles")
 @Getter
 @Setter
-@SQLDelete(sql = "UPDATE roles SET deleted_at = NOW() WHERE id = ?") // Implement soft delete don't need write more code
+@SQLDelete(sql = "UPDATE profiles SET deleted_at = NOW() WHERE id = ?") // Implement soft delete don't need write more code
 public class Profile {
 
     @Id
