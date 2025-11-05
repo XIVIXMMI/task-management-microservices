@@ -30,9 +30,11 @@ public class User {
     inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles; // (Many:Many)
 
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
+    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     /*  use JPA lifecycle callbacks:

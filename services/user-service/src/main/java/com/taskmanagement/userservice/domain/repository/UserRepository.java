@@ -1,8 +1,6 @@
 package com.taskmanagement.userservice.domain.repository;
 
 import com.taskmanagement.userservice.domain.entity.User;
-import com.taskmanagement.userservice.infrastructure.persistence.JpaUserRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.UUID;

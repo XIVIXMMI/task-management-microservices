@@ -26,12 +26,16 @@ public class Role {
     @ElementCollection
     @CollectionTable(name = "role_permissions",
     joinColumns = @JoinColumn(name = "role_id"))
-    private Set<RolePermission> permissions; // combibe resource and action
+    private Set<RolePermission> permissions; // combine resource and action
 
     private UUID createdBy;
     private UUID updatedBy;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     /*  use JPA lifecycle callbacks:

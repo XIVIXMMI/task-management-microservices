@@ -1,12 +1,12 @@
 package com.taskmanagement.userservice.application.service;
 
 import com.taskmanagement.userservice.domain.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-public class UserServiceImpl {
+@Service
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository; // Domain interface
-
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 }
