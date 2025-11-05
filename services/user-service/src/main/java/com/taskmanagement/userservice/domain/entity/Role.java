@@ -3,6 +3,7 @@ package com.taskmanagement.userservice.domain.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Table(name = "roles")
 @Getter
 @Setter
+@SQLDelete(sql = "UPDATE roles SET deleted_at = NOW() WHERE id = ?") // Implement soft delete don't need write more code
 public class Role {
 
     @Id
@@ -29,7 +31,9 @@ public class Role {
     joinColumns = @JoinColumn(name = "role_id"))
     private Set<RolePermission> permissions; // combine resource and action
 
+    @Column(name = "created_by")
     private UUID createdBy;
+    @Column(name = "updated_by")
     private UUID updatedBy;
 
     @Column(name = "created_at", nullable = false, updatable = false)
