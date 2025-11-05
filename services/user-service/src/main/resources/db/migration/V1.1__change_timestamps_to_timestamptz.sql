@@ -1,0 +1,34 @@
+--change all timestamp column to TIMESTAMPTZ
+ALTER TABLE users
+    ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC',
+    ALTER COLUMN updated_at TYPE TIMESTAMPTZ USING updated_at AT TIME ZONE 'UTC',
+    ALTER COLUMN deleted_at TYPE TIMESTAMPTZ USING deleted_at AT TIME ZONE 'UTC';
+
+ALTER TABLE profiles
+    ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC',
+    ALTER COLUMN updated_at TYPE TIMESTAMPTZ USING updated_at AT TIME ZONE 'UTC',
+    ALTER COLUMN deleted_at TYPE TIMESTAMPTZ USING deleted_at AT TIME ZONE 'UTC';
+
+ALTER TABLE roles
+    ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC',
+    ALTER COLUMN updated_at TYPE TIMESTAMPTZ USING updated_at AT TIME ZONE 'UTC',
+    ALTER COLUMN deleted_at TYPE TIMESTAMPTZ USING deleted_at AT TIME ZONE 'UTC';
+
+ALTER TABLE user_roles
+    ALTER COLUMN assigned_at TYPE TIMESTAMPTZ USING assigned_at AT TIME ZONE 'UTC';
+
+-- Remove DEFAULT CURRENT_TIMESTAMP (let Java handle it)
+ALTER TABLE users
+    ALTER COLUMN created_at DROP DEFAULT,
+    ALTER COLUMN updated_at DROP DEFAULT;
+
+ALTER TABLE profiles
+    ALTER COLUMN created_at DROP DEFAULT,
+    ALTER COLUMN updated_at DROP DEFAULT;
+
+ALTER TABLE roles
+    ALTER COLUMN created_at DROP DEFAULT,
+    ALTER COLUMN updated_at DROP DEFAULT;
+
+ALTER TABLE user_roles
+    ALTER COLUMN assigned_at DROP DEFAULT;
