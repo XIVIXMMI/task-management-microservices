@@ -35,3 +35,11 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# Security - Environment files
+.env
+.env.local
+.env.*.local
+application-local.yml
+application-local.properties
+**/application-local.properties
