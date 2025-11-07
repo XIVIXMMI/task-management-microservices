@@ -38,13 +38,8 @@ public class CustomUserDetails implements UserDetails, CredentialsContainer {
 
         // Convert Roles/Permission to GrantedAuthority
         Collection<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
                 .collect(Collectors.toList());
-
-        // Add role to Authorities ( FORMAT: ROLE_ADMIN, ROLE_USER)
-        user.getRoles().forEach( role ->
-                authorities.add(new SimpleGrantedAuthority("ROLE_" +role.getName()))
-        );
 
         return new CustomUserDetails(
                 user.getId(),

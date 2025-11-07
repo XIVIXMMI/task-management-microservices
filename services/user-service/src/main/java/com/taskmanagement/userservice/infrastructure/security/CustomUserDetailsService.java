@@ -1,7 +1,6 @@
 package com.taskmanagement.userservice.infrastructure.security;
 
 import com.taskmanagement.userservice.domain.entity.User;
-import com.taskmanagement.userservice.domain.exception.UserNotFoundException;
 import com.taskmanagement.userservice.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,7 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(
+                .orElseThrow(() -> new UsernameNotFoundException(
                         "User not found with email " + email
                 ));
         return CustomUserDetails.fromUser(user);
