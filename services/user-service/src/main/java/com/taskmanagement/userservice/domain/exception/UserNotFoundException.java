@@ -1,4 +1,7 @@
 package com.taskmanagement.userservice.domain.exception;
 
-public class UserNotFoundException {
+public class UserNotFoundException extends RuntimeException {
+    public UserNotFoundException(String message) {
+        super(message);
+    }
 }
