@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
- * CustomUserDetailService load user from Database
+ * CustomUserDetailsService load user from Database
  * Spring Security invoked this service when authenticate
  */
 @Service
