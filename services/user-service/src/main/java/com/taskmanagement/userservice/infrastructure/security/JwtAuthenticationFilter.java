@@ -8,6 +8,7 @@ import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -57,6 +58,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 );
                 // set authentication vào SecurityContext -> Spring Security knơw that user is authenticated
                 log.debug("Set authentication for user: {}", username);
+                // must check null to avoid override authenticated
+                if (
+                    SecurityContextHolder.getContext().getAuthentication() ==
+                    null
+                ) {
+                    SecurityContextHolder.getContext().setAuthentication(
+                        authentication
+                    );
+                }
             }
         } catch (Exception ex) {
             log.debug("Cannot set authentication: {}", ex.getMessage());
