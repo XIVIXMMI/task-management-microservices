@@ -5,10 +5,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -41,18 +44,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Validate token
             if (StringUtils.hasText(jwt) && jwtUtil.validateToken(jwt)) {
                 String username = jwtUtil.extractUsername(jwt);
+                UUID userId = jwtUtil.extractUserId(jwt);
+                String email = jwtUtil.extractEmail(jwt);
+                List<String> roles = jwtUtil.extractRole(jwt);
+
                 // load userDetails form Database
-                UserDetails userDetails = userDetailsService.loadUserByUsername(
-                    username
+                // UserDetails userDetails = userDetailsService.loadUserByUsername(
+                //     username
+                // );
+
+                // Build UserDetails from JWT claims
+                UserDetails userDetails = CustomUserDetails.fromJwtClaims(
+                    userId,
+                    email,
+                    roles
                 );
+
                 // create an authentication object
                 UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null, // credentials (password) - no need cause authenticated
                         userDetails.getAuthorities()
+                        // -> need to pass Authorities cause userDetails above still not an Authenticated Object
                     );
-                // set details
+                // set details for save ip and session-id for audit/tracking
                 authentication.setDetails(
                     new WebAuthenticationDetailsSource().buildDetails(request)
                 );
