@@ -7,10 +7,9 @@ import com.taskmanagement.userservice.domain.exception.InvalidRefreshTokenExcept
 import com.taskmanagement.userservice.domain.exception.EmailExistedException;
 import com.taskmanagement.userservice.domain.repository.ProfileRepository;
 import com.taskmanagement.userservice.domain.repository.UserRepository;
-import com.taskmanagement.userservice.infrastructure.security.CustomUserDetails;
-import com.taskmanagement.userservice.infrastructure.security.CustomUserDetailsService;
-import com.taskmanagement.userservice.infrastructure.security.JwtUtil;
-import com.taskmanagement.userservice.infrastructure.security.PasswordEncoderConfig;
+import com.taskmanagement.userservice.application.security.CustomUserDetails;
+import com.taskmanagement.userservice.application.security.CustomUserDetailsService;
+import com.taskmanagement.userservice.application.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -65,8 +64,9 @@ public class AuthServiceImpl implements AuthService{
     @Override
     @Transactional
     public RegisterResponse register(RegisterRequest request) {
-        userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new EmailExistedException("Email is already existed!!"));
+        if(userRepository.existsByEmail(request.getEmail())){
+            throw new EmailExistedException("Email is already existed!!!");
+        }
         User user = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))

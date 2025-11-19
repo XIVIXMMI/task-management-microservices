@@ -1,4 +1,4 @@
-package com.taskmanagement.userservice.infrastructure.security;
+package com.taskmanagement.userservice.application.security;
 
 import com.taskmanagement.userservice.domain.entity.User;
 import com.taskmanagement.userservice.domain.repository.UserRepository;

@@ -1,4 +1,4 @@
-package com.taskmanagement.userservice.infrastructure.security;
+package com.taskmanagement.userservice.application.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -6,7 +6,6 @@ import io.jsonwebtoken.security.SecurityException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import javax.crypto.SecretKey;
 import lombok.extern.slf4j.Slf4j;
