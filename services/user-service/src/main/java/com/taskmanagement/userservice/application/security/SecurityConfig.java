@@ -1,4 +1,4 @@
-package com.taskmanagement.userservice.infrastructure.security;
+package com.taskmanagement.userservice.application.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

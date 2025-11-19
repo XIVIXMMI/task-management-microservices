@@ -1,8 +1,7 @@
 package com.taskmanagement.userservice.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDate;
@@ -15,6 +14,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @SQLDelete(sql = "UPDATE profiles SET deleted_at = NOW() WHERE id = ?") // Implement soft delete don't need write more code
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Profile {
 
     @Id

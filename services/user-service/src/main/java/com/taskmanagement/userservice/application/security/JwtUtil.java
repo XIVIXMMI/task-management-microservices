@@ -1,4 +1,4 @@
-package com.taskmanagement.userservice.infrastructure.security;
+package com.taskmanagement.userservice.application.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -6,7 +6,6 @@ import io.jsonwebtoken.security.SecurityException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import javax.crypto.SecretKey;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +47,8 @@ public class JwtUtil {
                 .collect(Collectors.toList())
         );
 
+        claims.put("tokenType","ACCESS");
+
         return createToken(claims, userDetails.getUsername(), expiration);
     }
 
@@ -56,6 +57,7 @@ public class JwtUtil {
         claims.put("userId", userDetails.getId().toString());
         claims.put("email", userDetails.getEmail());
 
+        claims.put("tokenType", "REFRESH");
         return createToken(
             claims,
             userDetails.getUsername(),
@@ -173,4 +175,15 @@ public class JwtUtil {
         byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+    public boolean isRefreshToken(String token) {
+        try {
+            Claims claims = extractAllClaims(token);
+            return "REFRESH".equals(claims.get("tokenType", String.class));
+        } catch (Exception e){
+            log.error("Failed to extract token type: {}",e.getMessage());
+            return false;
+        }
+    }
+
 }
