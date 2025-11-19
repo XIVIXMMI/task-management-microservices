@@ -10,6 +10,7 @@ import com.taskmanagement.userservice.domain.repository.UserRepository;
 import com.taskmanagement.userservice.application.security.CustomUserDetails;
 import com.taskmanagement.userservice.application.security.CustomUserDetailsService;
 import com.taskmanagement.userservice.application.security.JwtUtil;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -90,8 +91,13 @@ public class AuthServiceImpl implements AuthService{
         String refreshToken = request.refreshToken();
 
         if(!jwtUtil.validateToken(refreshToken)){
-            throw new InvalidRefreshTokenException("Invalid Token");
+            throw new InvalidRefreshTokenException("Token is invalid or expired");
         }
+
+        if(!jwtUtil.isRefreshToken(refreshToken)){
+            throw new InvalidRefreshTokenException("Token is not a refresh token");
+        }
+
         String username = jwtUtil.extractUsername(refreshToken);
 
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
@@ -105,13 +111,13 @@ public class AuthServiceImpl implements AuthService{
                 .tokenType(TOKEN_TYPE)
                 .expiredIn(EXPIRED_TIME)
                 .email(customUserDetails.getEmail())
-                .userId(UUID.fromString(customUserDetails.getId().toString()))
+                .userId(customUserDetails.getId())
                 .build();
     }
 
     @Override
     public void logout(String token) {
-        // may be can add token to the black-list
+        // may be can add token to the blacklist
         log.info("User logged out - token removed client-side");
     }
 }
