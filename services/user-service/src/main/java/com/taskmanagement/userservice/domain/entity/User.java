@@ -1,8 +1,7 @@
 package com.taskmanagement.userservice.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -17,6 +16,9 @@ import java.util.UUID;
 @Setter
 @SQLDelete(sql = "UPDATE users SET deleted_at = NOW() WHERE id = ?") // Implement soft delete don't need write more code
 @Where(clause = "deleted_at IS NULL")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
