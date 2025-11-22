@@ -1,4 +1,4 @@
-package com.taskmanagement.userservice.application.security;
+package com.taskmanagement.userservice.infrastructure.security;
 
 import com.taskmanagement.userservice.domain.entity.User;
 import java.util.Collection;

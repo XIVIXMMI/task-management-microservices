@@ -1,5 +1,6 @@
-package com.taskmanagement.userservice.application.security;
+package com.taskmanagement.userservice.application.utils;
 
+import com.taskmanagement.userservice.infrastructure.security.CustomUserDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;

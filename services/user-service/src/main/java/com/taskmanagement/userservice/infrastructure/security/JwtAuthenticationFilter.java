@@ -1,5 +1,6 @@
-package com.taskmanagement.userservice.application.security;
+package com.taskmanagement.userservice.infrastructure.security;
 
+import com.taskmanagement.userservice.application.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

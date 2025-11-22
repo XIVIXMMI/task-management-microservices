@@ -7,10 +7,9 @@ import com.taskmanagement.userservice.domain.exception.InvalidRefreshTokenExcept
 import com.taskmanagement.userservice.domain.exception.EmailExistedException;
 import com.taskmanagement.userservice.domain.repository.ProfileRepository;
 import com.taskmanagement.userservice.domain.repository.UserRepository;
-import com.taskmanagement.userservice.application.security.CustomUserDetails;
-import com.taskmanagement.userservice.application.security.CustomUserDetailsService;
-import com.taskmanagement.userservice.application.security.JwtUtil;
-import io.jsonwebtoken.Claims;
+import com.taskmanagement.userservice.infrastructure.security.CustomUserDetails;
+import com.taskmanagement.userservice.infrastructure.security.CustomUserDetailsService;
+import com.taskmanagement.userservice.application.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;

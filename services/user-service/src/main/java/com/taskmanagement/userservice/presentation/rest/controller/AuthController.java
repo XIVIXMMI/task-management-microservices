@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/v1/auth")
 public class AuthController {
 
+
+
     /*
     // Features to add:
     - POST /auth/register (user registration)
