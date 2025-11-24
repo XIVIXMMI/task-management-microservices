@@ -2,6 +2,7 @@ package com.taskmanagement.userservice.presentation.advice;
 
 import com.taskmanagement.userservice.domain.exception.EmailExistedException;
 import com.taskmanagement.userservice.domain.exception.InvalidRefreshTokenException;
+import com.taskmanagement.userservice.domain.exception.RoleNotFoundException;
 import com.taskmanagement.userservice.domain.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<?> handleUserNotFoundException(UserNotFoundException ex){
+        return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(RoleNotFoundException.class)
+    public ResponseEntity<?> handleRoleNotFoundException(RoleNotFoundException ex){
         return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
