@@ -44,12 +44,17 @@ public class SecurityConfig {
                 auth
                     // Public endpoints
                     .requestMatchers(
-                        "/api/auth/**",
-                        "/api/health",
-                        "/actuator/**"
+                        "/api/v1/auth/**",
+                            "/api/health",
+                            "/actuator/**",
+                            // Swagger endpoints
+                            "/v3/api-docs/**",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html",
+                            "/webjars/**",
+                            "/swagger-resources/**"
                     )
                     .permitAll()
-                    // Admin endpoints
                     .requestMatchers("/api/admin/**")
                     .hasRole("ADMIN")
                     // All other requests need authorization
