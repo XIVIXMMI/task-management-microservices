@@ -1,6 +1,10 @@
 package com.taskmanagement.userservice.infrastructure.security;
 
+import com.taskmanagement.userservice.domain.entity.Role;
+import com.taskmanagement.userservice.domain.entity.RolePermission;
 import com.taskmanagement.userservice.domain.entity.User;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -34,12 +38,23 @@ public class CustomUserDetails implements UserDetails, CredentialsContainer {
      * Call by class not instance so this function needs *static*
      */
     public static CustomUserDetails fromUser(User user) {
-        // Convert Roles/Permission to GrantedAuthority
-        Collection<GrantedAuthority> authorities = user
-            .getRoles()
-            .stream()
-            .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
-            .collect(Collectors.toList());
+        /*
+            Convert Roles/Permission to GrantedAuthority
+            Handle null or empty roles
+         */
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+
+        if(user.getRoles() != null && !user.getRoles().isEmpty()){
+            for(Role role : user.getRoles()){
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+                if(role.getPermissions() != null && !role.getPermissions().isEmpty()){
+                    for(RolePermission permission : role.getPermissions()){
+                        String authority = permission.getResource() + ":" + permission.getAction();
+                        authorities.add(new SimpleGrantedAuthority(authority));
+                    }
+                }
+            }
+        }
 
         return new CustomUserDetails(
             user.getId(),
@@ -62,7 +77,7 @@ public class CustomUserDetails implements UserDetails, CredentialsContainer {
         String email,
         Collection<String> roles
     ) {
-        // Convert String role to GrantedAuthority
+        // Convert a String role to GrantedAuthority
         Collection<GrantedAuthority> authorities = roles
             .stream()
             .map(SimpleGrantedAuthority::new)
