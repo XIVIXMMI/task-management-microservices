@@ -7,6 +7,7 @@ import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -31,11 +32,12 @@ public class User {
     @Column(name = "password_hash", nullable = false)
     private String password;
 
-    @ManyToMany
+    @Builder.Default
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable( name = "user_roles",
     joinColumns = @JoinColumn(name = "user_id"),
     inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles; // (Many:Many)
+    private Set<Role> roles = new HashSet<>(); // (Many:Many), create SET first to avoid null pointer exception
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
