@@ -2,10 +2,13 @@ package com.taskmanagement.userservice.application.service;
 
 import com.taskmanagement.userservice.application.dto.*;
 import com.taskmanagement.userservice.domain.entity.Profile;
+import com.taskmanagement.userservice.domain.entity.Role;
 import com.taskmanagement.userservice.domain.entity.User;
 import com.taskmanagement.userservice.domain.exception.InvalidRefreshTokenException;
 import com.taskmanagement.userservice.domain.exception.EmailExistedException;
+import com.taskmanagement.userservice.domain.exception.RoleNotFoundException;
 import com.taskmanagement.userservice.domain.repository.ProfileRepository;
+import com.taskmanagement.userservice.domain.repository.RoleRepository;
 import com.taskmanagement.userservice.domain.repository.UserRepository;
 import com.taskmanagement.userservice.infrastructure.security.CustomUserDetails;
 import com.taskmanagement.userservice.infrastructure.security.CustomUserDetailsService;
@@ -21,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -29,6 +33,8 @@ import java.util.UUID;
 public class AuthServiceImpl implements AuthService{
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
+    private final RoleRepository roleRepository;
+
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService customUserDetailsService;
     private final AuthenticationManager authenticationManager;
@@ -67,9 +73,14 @@ public class AuthServiceImpl implements AuthService{
         if(userRepository.existsByEmail(request.getEmail())){
             throw new EmailExistedException("Email is already existed!!!");
         }
+
+        Role userRole = roleRepository.findByName("USER")
+                .orElseThrow(() -> new RoleNotFoundException("Default role USER not found"));
+
         User user = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .roles(Set.of(userRole))
                 .build();
 
         User savedUser = userRepository.save(user);
