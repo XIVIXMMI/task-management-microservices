@@ -1,26 +1,53 @@
 package com.taskmanagement.userservice.presentation.rest.controller;
 
+import com.taskmanagement.userservice.application.dto.LoginRequest;
+import com.taskmanagement.userservice.application.dto.LoginResponse;
+import com.taskmanagement.userservice.application.dto.RegisterRequest;
+import com.taskmanagement.userservice.application.dto.RegisterResponse;
+import com.taskmanagement.userservice.application.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/auth")
+@Tag(name = "Authentication",
+        description = "Endpoints for user authentication and authorization")
 public class AuthController {
 
+    private final AuthService authService;
 
+    @PostMapping("/login")
+    @Operation(summary = "User Login",
+            description = "Authenticate user and return JWT tokens")
+    public ResponseEntity<LoginResponse> login(
+            @Valid @RequestBody LoginRequest request
+    ) {
+        LoginResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/register")
+    @Operation(summary = "User Register",
+            description = "Create new User")
+    public ResponseEntity<RegisterResponse> register(
+            @Valid @RequestBody RegisterRequest request
+    ) {
+        RegisterResponse response = authService.register(request);
+        return ResponseEntity.ok(response);
+    }
 
     /*
     // Features to add:
-    - POST /auth/register (user registration)
-    - POST /auth/login (email + password → JWT token)
-    - POST /auth/logout (invalidate token)
     - POST /auth/refresh-token (extend session)
     - GET /auth/me (get current user info)
-
-
 
     // Features:
     - Send verification email on registration

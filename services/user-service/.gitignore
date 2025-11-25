@@ -42,6 +42,7 @@ out/
 .env.*.local
 application-local.yml
 application-local.properties
+application-prod.properties
 **/application-local.properties
 
 # Document

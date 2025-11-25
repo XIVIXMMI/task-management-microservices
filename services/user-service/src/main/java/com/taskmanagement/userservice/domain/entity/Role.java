@@ -6,6 +6,7 @@ import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -28,10 +29,11 @@ public class Role {
     @ManyToMany(mappedBy = "roles")
     private Set<User> users; // (many:many)
 
-    @ElementCollection
+    @Builder.Default
+    @ElementCollection(fetch = FetchType.EAGER) // <- Lazy load by default
     @CollectionTable(name = "role_permissions",
-    joinColumns = @JoinColumn(name = "role_id"))
-    private Set<RolePermission> permissions; // combine resource and action
+        joinColumns = @JoinColumn(name = "role_id"))
+    private Set<RolePermission> permissions = new HashSet<>(); // combine resource and action
 
     @Column(name = "created_by")
     private UUID createdBy;
