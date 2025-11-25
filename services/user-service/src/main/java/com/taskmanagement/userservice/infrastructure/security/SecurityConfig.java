@@ -1,8 +1,10 @@
 package com.taskmanagement.userservice.infrastructure.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -40,27 +42,17 @@ public class SecurityConfig {
             // Disable CSRF
             .csrf(AbstractHttpConfigurer::disable)
             // Config authorization
-            .authorizeHttpRequests(auth ->
-                auth
-                    // Public endpoints
-                    .requestMatchers(
+            .authorizeHttpRequests(auth -> {
+                auth.requestMatchers(
                         "/api/v1/auth/**",
-                            "/api/health",
-                            "/actuator/**",
-                            // Swagger endpoints
-                            "/v3/api-docs/**",
-                            "/swagger-ui/**",
-                            "/swagger-ui.html",
-                            "/webjars/**",
-                            "/swagger-resources/**"
-                    )
-                    .permitAll()
-                    .requestMatchers("/api/admin/**")
-                    .hasRole("ADMIN")
-                    // All other requests need authorization
-                    .anyRequest()
-                    .authenticated()
-            )
+                        "/api/health",
+                        "/actuator/health",
+                        "/actuator/info"
+                        )
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated();
+            })
             // Disable session (stateless with JWT)
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
