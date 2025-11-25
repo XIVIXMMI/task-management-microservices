@@ -44,21 +44,10 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/users/{id}")
-    public void deleteUser(@PathVariable UUID id) {
-        // Only admins can delete users
-    }
-
     /*
     // Features to add:
-    - POST /auth/register (user registration)
-    - POST /auth/login (email + password → JWT token)
-    - POST /auth/logout (invalidate token)
     - POST /auth/refresh-token (extend session)
     - GET /auth/me (get current user info)
-
-
 
     // Features:
     - Send verification email on registration

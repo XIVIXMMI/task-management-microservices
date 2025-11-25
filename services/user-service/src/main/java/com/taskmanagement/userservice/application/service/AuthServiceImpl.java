@@ -24,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -80,7 +81,7 @@ public class AuthServiceImpl implements AuthService{
         User user = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .roles(Set.of(userRole))
+                .roles(new HashSet<>(Set.of(userRole))) // Mutable set, can modify later
                 .build();
 
         User savedUser = userRepository.save(user);
