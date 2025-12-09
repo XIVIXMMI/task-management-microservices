@@ -25,6 +25,4 @@ public class LoginResponse {
     private UUID userId;
     @Schema(description = "Unique email of user", example = "")
     private  String email;
-    @Schema(description = "First name to display user", example = "")
-    private String firstName;
 }

@@ -81,7 +81,7 @@ public class AuthServiceImpl implements AuthService{
         User user = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .roles(new HashSet<>(Set.of(userRole))) // Mutable set, can modify later
+                .roles(new HashSet<>(Set.of(userRole))) // Mutable set can modify later
                 .build();
 
         User savedUser = userRepository.save(user);
@@ -128,7 +128,7 @@ public class AuthServiceImpl implements AuthService{
 
     @Override
     public void logout(String token) {
-        // may be can add token to the blacklist
+        // maybe can add token to the blocklist
         log.info("User logged out - token removed client-side");
     }
 }
