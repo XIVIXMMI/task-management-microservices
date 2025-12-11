@@ -1,9 +1,6 @@
 package com.taskmanagement.userservice.presentation.rest.controller;
 
-import com.taskmanagement.userservice.application.dto.LoginRequest;
-import com.taskmanagement.userservice.application.dto.LoginResponse;
-import com.taskmanagement.userservice.application.dto.RegisterRequest;
-import com.taskmanagement.userservice.application.dto.RegisterResponse;
+import com.taskmanagement.userservice.application.dto.*;
 import com.taskmanagement.userservice.application.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,6 +36,14 @@ public class AuthController {
     ) {
         RegisterResponse response = authService.register(request);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/refresh-token")
+    @Operation(summary = "Refresh Token",
+            description = "Refresh JWT tokens using a valid refresh token")
+    public ResponseEntity<LoginResponse> refreshToken(
+            @RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(authService.refreshToken(request));
     }
 
     /*
