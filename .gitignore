@@ -53,3 +53,7 @@ getTaskwFilter.json
 *.temp
 
 docs/plans
+
+# Claude Code project guidelines (personal, not for team)
+CLAUDE.md
+.claude/
