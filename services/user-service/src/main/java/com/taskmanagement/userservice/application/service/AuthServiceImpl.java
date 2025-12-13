@@ -131,4 +131,5 @@ public class AuthServiceImpl implements AuthService{
         // maybe can add token to the blocklist
         log.info("User logged out - token removed client-side");
     }
+
 }

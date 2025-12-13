@@ -49,6 +49,9 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+	// H2 Database for testing
+	testRuntimeOnly 'com.h2database:h2'
+
 	// Flyway Migration
 	implementation 'org.flywaydb:flyway-core'
 	runtimeOnly 'org.flywaydb:flyway-database-postgresql'
