@@ -1,9 +1,6 @@
 package com.taskmanagement.userservice.presentation.advice;
 
-import com.taskmanagement.userservice.domain.exception.EmailExistedException;
-import com.taskmanagement.userservice.domain.exception.InvalidRefreshTokenException;
-import com.taskmanagement.userservice.domain.exception.RoleNotFoundException;
-import com.taskmanagement.userservice.domain.exception.UserNotFoundException;
+import com.taskmanagement.userservice.domain.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,6 +30,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RoleNotFoundException.class)
     public ResponseEntity<?> handleRoleNotFoundException(RoleNotFoundException ex){
         return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(EmailNotFoundException.class)
+    public ResponseEntity<?> handleEmailNotFoundException(EmailNotFoundException ex){
+        return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(ResetTokenNotFoundException.class)
+    public ResponseEntity<?> handleResetTokenNotFoundException(ResetTokenNotFoundException ex){
+        return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(ResetTokenExpiredException.class)
+    public ResponseEntity<?> handleResetTokenExpiredException(ResetTokenExpiredException ex){
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     private ResponseEntity<?> buildErrorResponse(HttpStatus status, String message){

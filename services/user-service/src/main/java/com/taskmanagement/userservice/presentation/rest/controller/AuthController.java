@@ -2,11 +2,13 @@ package com.taskmanagement.userservice.presentation.rest.controller;
 
 import com.taskmanagement.userservice.application.dto.*;
 import com.taskmanagement.userservice.application.service.AuthService;
+import com.taskmanagement.userservice.application.service.ResetPasswordService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final ResetPasswordService resetPasswordService;
 
     @PostMapping("/login")
     @Operation(summary = "User Login",
@@ -42,13 +45,33 @@ public class AuthController {
     @Operation(summary = "Refresh Token",
             description = "Refresh JWT tokens using a valid refresh token")
     public ResponseEntity<LoginResponse> refreshToken(
-            @RequestBody RefreshTokenRequest request) {
+            @Valid @RequestBody RefreshTokenRequest request) {
         return ResponseEntity.ok(authService.refreshToken(request));
+    }
+
+    @PostMapping("/forgot-password")
+    @PreAuthorize("")
+    @Operation(summary = "Forgot Password",
+            description = "Send password reset email to user")
+    public ResponseEntity<MessageResponse> forgotPassword(
+            @Valid @RequestBody PasswordResetTokenRequest request
+    ) throws InterruptedException {
+        resetPasswordService.createPasswordResetToken(request);
+        return ResponseEntity.ok(new MessageResponse("If the email exists, a reset link has been sent") );
+    }
+
+    @PostMapping("/reset-password")
+    @Operation(summary = "Reset Password",
+            description = "Reset user password using reset token")
+    public ResponseEntity<MessageResponse> resetPassword(
+            @Valid @RequestBody ResetPasswordRequest request
+    ) {
+        resetPasswordService.resetPassword(request);
+        return ResponseEntity.ok(new MessageResponse("Password has been reset successfully") );
     }
 
     /*
     // Features to add:
-    - POST /auth/refresh-token (extend session)
     - GET /auth/me (get current user info)
 
     // Features:
@@ -57,7 +80,7 @@ public class AuthController {
     - POST /auth/resend-verification
 
     Database changes needed:
-    -- Add to users table (you have these in comments already!)
+    -- Add to users' table (you have these in comments already!)
     ALTER TABLE users
         ADD COLUMN email_verified_at TIMESTAMPTZ,
         ADD COLUMN verification_token VARCHAR(255),
@@ -66,9 +89,6 @@ public class AuthController {
     Why: Prevents fake registrations, confirms user owns the email.
 
      // Endpoints:
-    - Reset password
-    - POST /auth/forgot-password (send reset email)
-    - POST /auth/reset-password (with token)
     - PUT /users/me/change-password (authenticated user)
 
     Why: Users forget passwords. This is expected functionality.
