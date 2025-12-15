@@ -5,7 +5,7 @@ import com.taskmanagement.userservice.application.dto.ResetPasswordRequest;
 import com.taskmanagement.userservice.application.dto.SendEmailResetRequest;
 import com.taskmanagement.userservice.domain.entity.PasswordResetToken;
 import com.taskmanagement.userservice.domain.entity.User;
-import com.taskmanagement.userservice.domain.exception.EmailNotFoundException;
+import com.taskmanagement.userservice.domain.exception.ResetTokenNotFoundException;
 import com.taskmanagement.userservice.domain.exception.UserNotFoundException;
 import com.taskmanagement.userservice.domain.repository.PasswordResetTokenRepository;
 import com.taskmanagement.userservice.domain.repository.UserRepository;
@@ -25,6 +25,7 @@ import java.util.Base64;
 @RequiredArgsConstructor
 public class ResetPasswordServiceImpl implements ResetPasswordService{
 
+    // Prefer injecting from config: app.frontend.base-url=https://...
     private static final String FRONTEND_DOMAIN_NAME = "my-frontend-app.com";
     private static final int TOKEN_LENGTH = 32;
     private static final int TOKEN_EXPIRATION_MINUTES = 15;
@@ -38,7 +39,7 @@ public class ResetPasswordServiceImpl implements ResetPasswordService{
     @Override
     @Transactional
 //    @RateLimiter(name = "passwordResetLimiter", limit = 5, duration = 60)
-    public void createPasswordResetToken(PasswordResetTokenRequest request) throws InterruptedException {
+    public void createPasswordResetToken(PasswordResetTokenRequest request) {
         String email = request.email();
         User user = userRepository.findByEmail(email).orElse(null);
 
@@ -61,8 +62,13 @@ public class ResetPasswordServiceImpl implements ResetPasswordService{
                     new SendEmailResetRequest(email, resetLink)
             );
         } else {
-            log.info("Password reset requested for non-existing email: {}", email);
-            Thread.sleep(1000); // Simulate processing time
+            log.info("Password reset requested for non-existing");
+            // If you want response equalization, consider doing it at the edge (gateway) or use a small async delay.
+            try {
+                Thread.sleep(1000); // Simulate processing time
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -71,9 +77,9 @@ public class ResetPasswordServiceImpl implements ResetPasswordService{
     public void resetPassword(ResetPasswordRequest request) {
         String token = request.token();
         PasswordResetToken resetToken = passwordResetRepository.findByToken(token)
-                .orElseThrow( () -> new IllegalArgumentException("Invalid password reset token"));
-        if( resetToken.isUsed() || resetToken.getExpiryAt().isBefore(LocalDateTime.now())){
-            throw new IllegalArgumentException("Password reset token is either used or expired");
+                .orElseThrow( () -> new ResetTokenNotFoundException("Invalid password reset token"));
+        if(resetToken.isUsed() || resetToken.getExpiryAt().isBefore(LocalDateTime.now())){
+            throw new ResetTokenNotFoundException("Password reset token is either used or expired");
         }
         User user = userRepository.findById(resetToken.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User's token not found"));

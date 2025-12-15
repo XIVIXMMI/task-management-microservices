@@ -5,7 +5,7 @@ import com.taskmanagement.userservice.application.dto.ResetPasswordRequest;
 
 public interface ResetPasswordService {
 
-    void createPasswordResetToken(PasswordResetTokenRequest request) throws InterruptedException;
+    void createPasswordResetToken(PasswordResetTokenRequest request);
     void resetPassword(ResetPasswordRequest request);
     void cleanupExpiredTokens();
 }
