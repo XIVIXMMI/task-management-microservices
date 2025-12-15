@@ -5,6 +5,7 @@ import com.taskmanagement.userservice.application.dto.ResetPasswordRequest;
 import com.taskmanagement.userservice.application.dto.SendEmailResetRequest;
 import com.taskmanagement.userservice.domain.entity.PasswordResetToken;
 import com.taskmanagement.userservice.domain.entity.User;
+import com.taskmanagement.userservice.domain.exception.ResetTokenExpiredException;
 import com.taskmanagement.userservice.domain.exception.ResetTokenNotFoundException;
 import com.taskmanagement.userservice.domain.exception.UserNotFoundException;
 import com.taskmanagement.userservice.domain.repository.PasswordResetTokenRepository;
@@ -79,7 +80,7 @@ public class ResetPasswordServiceImpl implements ResetPasswordService{
         PasswordResetToken resetToken = passwordResetRepository.findByToken(token)
                 .orElseThrow( () -> new ResetTokenNotFoundException("Invalid password reset token"));
         if(resetToken.isUsed() || resetToken.getExpiryAt().isBefore(LocalDateTime.now())){
-            throw new ResetTokenNotFoundException("Password reset token is either used or expired");
+            throw new ResetTokenExpiredException("Password reset token is either used or expired");
         }
         User user = userRepository.findById(resetToken.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User's token not found"));
