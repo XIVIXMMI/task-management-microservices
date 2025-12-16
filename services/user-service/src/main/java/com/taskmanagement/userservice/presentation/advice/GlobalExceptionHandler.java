@@ -42,8 +42,8 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
-    @ExceptionHandler(ResetTokenExpiredException.class)
-    public ResponseEntity<?> handleResetTokenExpiredException(ResetTokenExpiredException ex){
+    @ExceptionHandler(ResetTokenExpiredOrUsedException.class)
+    public ResponseEntity<?> handleResetTokenExpiredException(ResetTokenExpiredOrUsedException ex){
         return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 

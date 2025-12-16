@@ -5,7 +5,7 @@ import com.taskmanagement.userservice.application.dto.ResetPasswordRequest;
 import com.taskmanagement.userservice.application.dto.SendEmailResetRequest;
 import com.taskmanagement.userservice.domain.entity.PasswordResetToken;
 import com.taskmanagement.userservice.domain.entity.User;
-import com.taskmanagement.userservice.domain.exception.ResetTokenExpiredException;
+import com.taskmanagement.userservice.domain.exception.ResetTokenExpiredOrUsedException;
 import com.taskmanagement.userservice.domain.exception.ResetTokenNotFoundException;
 import com.taskmanagement.userservice.domain.exception.UserNotFoundException;
 import com.taskmanagement.userservice.domain.repository.PasswordResetTokenRepository;
@@ -63,11 +63,12 @@ public class ResetPasswordServiceImpl implements ResetPasswordService{
                     new SendEmailResetRequest(email, resetLink)
             );
         } else {
-            log.info("Password reset requested for non-existing");
+            log.info("Password reset requested for non-existing email");
             // If you want response equalization, consider doing it at the edge (gateway) or use a small async delay.
             try {
                 Thread.sleep(1000); // Simulate processing time
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 throw new RuntimeException(e);
             }
         }
@@ -80,7 +81,7 @@ public class ResetPasswordServiceImpl implements ResetPasswordService{
         PasswordResetToken resetToken = passwordResetRepository.findByToken(token)
                 .orElseThrow( () -> new ResetTokenNotFoundException("Invalid password reset token"));
         if(resetToken.isUsed() || resetToken.getExpiryAt().isBefore(LocalDateTime.now())){
-            throw new ResetTokenExpiredException("Password reset token is either used or expired");
+            throw new ResetTokenExpiredOrUsedException("Password reset token is either used or expired");
         }
         User user = userRepository.findById(resetToken.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User's token not found"));
