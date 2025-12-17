@@ -12,6 +12,7 @@ import com.taskmanagement.userservice.domain.repository.PasswordResetTokenReposi
 import com.taskmanagement.userservice.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,8 +27,9 @@ import java.util.Base64;
 @RequiredArgsConstructor
 public class ResetPasswordServiceImpl implements ResetPasswordService{
 
-    // Prefer injecting from config: app.frontend.base-url=https://...
-    private static final String FRONTEND_DOMAIN_NAME = "my-frontend-app.com";
+    @Value("${app.frontend.base-url}")
+    private String frontendBaseUrl;
+
     private static final int TOKEN_LENGTH = 32;
     private static final int TOKEN_EXPIRATION_MINUTES = 15;
 
@@ -58,13 +60,13 @@ public class ResetPasswordServiceImpl implements ResetPasswordService{
                     .build();
             passwordResetRepository.save(resetToken);
 
-            String resetLink = "https://" + FRONTEND_DOMAIN_NAME + "/reset-password?token=" + token;
+            String resetLink = frontendBaseUrl + "/reset-password?token=" + token;
             emailService.sendPasswordResetEmail(
                     new SendEmailResetRequest(email, resetLink)
             );
         } else {
             log.info("Password reset requested for non-existing email");
-            // If you want response equalization, consider doing it at the edge (gateway) or use a small async delay.
+            // Want response equalization? Consider doing it at the edge (gateway) or use a small async delay.
             try {
                 Thread.sleep(1000); // Simulate processing time
             } catch (InterruptedException e) {
