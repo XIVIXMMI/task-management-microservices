@@ -71,7 +71,7 @@ public class ResetPasswordServiceImpl implements ResetPasswordService{
                 Thread.sleep(1000); // Simulate processing time
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
+                log.warn("Timing defense interrupted for non-existent email");
             }
         }
     }
