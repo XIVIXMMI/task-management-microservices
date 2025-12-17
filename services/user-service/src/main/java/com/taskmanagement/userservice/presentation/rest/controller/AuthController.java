@@ -50,12 +50,11 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    @PreAuthorize("")
     @Operation(summary = "Forgot Password",
             description = "Send password reset email to user")
     public ResponseEntity<MessageResponse> forgotPassword(
             @Valid @RequestBody PasswordResetTokenRequest request
-    ) throws InterruptedException {
+    ) {
         resetPasswordService.createPasswordResetToken(request);
         return ResponseEntity.ok(new MessageResponse("If the email exists, a reset link has been sent") );
     }

@@ -5,12 +5,14 @@ import com.taskmanagement.userservice.application.dto.ResetPasswordRequest;
 import com.taskmanagement.userservice.application.dto.SendEmailResetRequest;
 import com.taskmanagement.userservice.domain.entity.PasswordResetToken;
 import com.taskmanagement.userservice.domain.entity.User;
-import com.taskmanagement.userservice.domain.exception.EmailNotFoundException;
+import com.taskmanagement.userservice.domain.exception.ResetTokenExpiredOrUsedException;
+import com.taskmanagement.userservice.domain.exception.ResetTokenNotFoundException;
 import com.taskmanagement.userservice.domain.exception.UserNotFoundException;
 import com.taskmanagement.userservice.domain.repository.PasswordResetTokenRepository;
 import com.taskmanagement.userservice.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,9 @@ import java.util.Base64;
 @RequiredArgsConstructor
 public class ResetPasswordServiceImpl implements ResetPasswordService{
 
-    private static final String FRONTEND_DOMAIN_NAME = "my-frontend-app.com";
+    @Value("${app.frontend.base-url}")
+    private String frontendBaseUrl;
+
     private static final int TOKEN_LENGTH = 32;
     private static final int TOKEN_EXPIRATION_MINUTES = 15;
 
@@ -38,7 +42,7 @@ public class ResetPasswordServiceImpl implements ResetPasswordService{
     @Override
     @Transactional
 //    @RateLimiter(name = "passwordResetLimiter", limit = 5, duration = 60)
-    public void createPasswordResetToken(PasswordResetTokenRequest request) throws InterruptedException {
+    public void createPasswordResetToken(PasswordResetTokenRequest request) {
         String email = request.email();
         User user = userRepository.findByEmail(email).orElse(null);
 
@@ -56,13 +60,19 @@ public class ResetPasswordServiceImpl implements ResetPasswordService{
                     .build();
             passwordResetRepository.save(resetToken);
 
-            String resetLink = "https://" + FRONTEND_DOMAIN_NAME + "/reset-password?token=" + token;
+            String resetLink = frontendBaseUrl + "/reset-password?token=" + token;
             emailService.sendPasswordResetEmail(
                     new SendEmailResetRequest(email, resetLink)
             );
         } else {
-            log.info("Password reset requested for non-existing email: {}", email);
-            Thread.sleep(1000); // Simulate processing time
+            log.info("Password reset requested for non-existing email");
+            // Want response equalization? Consider doing it at the edge (gateway) or use a small async delay.
+            try {
+                Thread.sleep(1000); // Simulate processing time
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log.warn("Timing defense interrupted for non-existent email");
+            }
         }
     }
 
@@ -71,9 +81,9 @@ public class ResetPasswordServiceImpl implements ResetPasswordService{
     public void resetPassword(ResetPasswordRequest request) {
         String token = request.token();
         PasswordResetToken resetToken = passwordResetRepository.findByToken(token)
-                .orElseThrow( () -> new IllegalArgumentException("Invalid password reset token"));
-        if( resetToken.isUsed() || resetToken.getExpiryAt().isBefore(LocalDateTime.now())){
-            throw new IllegalArgumentException("Password reset token is either used or expired");
+                .orElseThrow( () -> new ResetTokenNotFoundException("Invalid password reset token"));
+        if(resetToken.isUsed() || resetToken.getExpiryAt().isBefore(LocalDateTime.now())){
+            throw new ResetTokenExpiredOrUsedException("Password reset token is either used or expired");
         }
         User user = userRepository.findById(resetToken.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User's token not found"));
