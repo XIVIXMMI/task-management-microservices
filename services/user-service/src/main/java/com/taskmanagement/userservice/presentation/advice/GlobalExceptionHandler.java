@@ -47,6 +47,11 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
+    @ExceptionHandler(ProfileNotFoundException.class)
+    public ResponseEntity<?> handleProfileNotFoundException(ProfileNotFoundException ex){
+        return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
     private ResponseEntity<?> buildErrorResponse(HttpStatus status, String message){
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
