@@ -31,9 +31,10 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/change-password")
+    @PostMapping("/me/password")
     @Operation(summary = "Change user password",
-    description = "Set new password for authenticated user")
+    description = "change password for authenticated user")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<MessageResponse> changePassword(
             @Valid @RequestBody ChangePasswordRequest request
             ) {
