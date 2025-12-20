@@ -39,7 +39,7 @@ public class UserController {
             @Valid @RequestBody ChangePasswordRequest request
             ) {
         userService.changePassword(request);
-        return ResponseEntity.ok(new MessageResponse("Password change successfully"));
+        return ResponseEntity.ok(new MessageResponse("Password changed successfully"));
     }
 
     /*

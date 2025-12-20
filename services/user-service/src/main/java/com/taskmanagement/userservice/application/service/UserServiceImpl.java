@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
         if(!request.newPassword().equals(request.confirmPassword())){
             throw new InvalidPasswordException("Confirm password does not match");
         }
-        user.setPassword(passwordEncoder.encode(request.confirmPassword()));
+        user.setPassword(passwordEncoder.encode(request.newPassword()));
         userRepository.save(user);
     }
 
