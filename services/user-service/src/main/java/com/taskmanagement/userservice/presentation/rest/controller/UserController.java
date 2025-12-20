@@ -33,7 +33,7 @@ public class UserController {
 
     @PutMapping("/me/password")
     @Operation(summary = "Change user password",
-    description = "change password for authenticated user")
+    description = "Change password for authenticated user")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<MessageResponse> changePassword(
             @Valid @RequestBody ChangePasswordRequest request
