@@ -31,7 +31,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/me/password")
+    @PutMapping("/me/password")
     @Operation(summary = "Change user password",
     description = "change password for authenticated user")
     @SecurityRequirement(name = "Bearer Authentication")

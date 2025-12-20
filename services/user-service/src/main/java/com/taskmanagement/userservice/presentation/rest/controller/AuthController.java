@@ -48,7 +48,7 @@ public class AuthController {
         return ResponseEntity.ok(authService.refreshToken(request));
     }
 
-    @PostMapping("/forgot-password")
+    @PostMapping("/password/forgot")
     @Operation(summary = "Forgot Password",
             description = "Send password reset email to user")
     public ResponseEntity<MessageResponse> forgotPassword(
@@ -58,7 +58,7 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("If the email exists, a reset link has been sent") );
     }
 
-    @PostMapping("/reset-password")
+    @PostMapping("/password/reset/confirm")
     @Operation(summary = "Reset Password",
             description = "Reset user password using reset token")
     public ResponseEntity<MessageResponse> resetPassword(
