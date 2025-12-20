@@ -60,7 +60,7 @@ public class ResetPasswordServiceImpl implements ResetPasswordService{
                     .build();
             passwordResetRepository.save(resetToken);
 
-            String resetLink = frontendBaseUrl + "/reset-password?token=" + token;
+            String resetLink = frontendBaseUrl + "/reset/confirm?token=" + token;
             emailService.sendPasswordResetEmail(
                     new SendEmailResetRequest(email, resetLink)
             );
