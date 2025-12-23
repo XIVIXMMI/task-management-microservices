@@ -63,6 +63,16 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    public UserProfileResponse getUserProfileById(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        Profile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException("Profile not found"));
+        return UserProfileResponse.from(user,profile);
+    }
+
+
 
     /*
     ====== UTILITY METHODS ======
@@ -71,7 +81,7 @@ public class UserServiceImpl implements UserService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         // defensive programming
         if( auth == null || !auth.isAuthenticated()){
-            throw new UnauthorizedException("User no authenticated");
+            throw new UnauthorizedException("User not authenticated");
         }
         Object principal = auth.getPrincipal();
         // except edge case anonymous user

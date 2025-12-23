@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 @Builder
 public record UserProfileResponse(
-        UUID id,
         String email,
         String firstName,
         String lastName,
@@ -20,7 +19,6 @@ public record UserProfileResponse(
     // static factory method
     public static UserProfileResponse from(User user, Profile profile){
         return UserProfileResponse.builder()
-                .id(user.getId())
                 .email(user.getEmail())
                 .firstName(profile.getFirstName())
                 .lastName(profile.getLastName())

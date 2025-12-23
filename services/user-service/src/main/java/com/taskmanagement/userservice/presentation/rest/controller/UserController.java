@@ -5,13 +5,14 @@ import com.taskmanagement.userservice.application.dto.MessageResponse;
 import com.taskmanagement.userservice.application.dto.UserProfileResponse;
 import com.taskmanagement.userservice.application.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,8 +43,16 @@ public class UserController {
         return ResponseEntity.ok(new MessageResponse("Password changed successfully"));
     }
 
+    @GetMapping("/{userId}/profile")
+    @Operation(summary = "Get user profile by ID",
+    description = "Get user profile by specified user's ID ")
+    public ResponseEntity<UserProfileResponse> getUserProfileById(
+            @PathVariable UUID userId){
+        UserProfileResponse response = userService.getUserProfileById(userId);
+        return ResponseEntity.ok(response);
+    }
+
     /*
-    - GET /users/{userId}/profile
     - PUT /users/{userId}/profile (update profile)
     - POST /users/{userId}/profile/avatar (upload photo)
     - DELETE /users/{userId}/profile/avatar
