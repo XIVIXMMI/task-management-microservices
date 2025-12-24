@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         Profile profile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException("Profile not found"));
+                .orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
         return UserProfileResponse.from(user,profile);
     }
 
@@ -79,18 +79,19 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         Profile profile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException("Profile not found"));
+                .orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
         updateProfileFields(profile,request);
         profileRepository.save(profile);
         return UserProfileResponse.from(user,profile);
     }
 
     @Override
+    @Transactional
     public UserProfileResponse updateUserProfileById(UUID userId, UpdateProfileRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         Profile profile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException("Profile not found"));
+                .orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
         updateProfileFields(profile,request);
         profileRepository.save(profile);
         return UserProfileResponse.from(user,profile);

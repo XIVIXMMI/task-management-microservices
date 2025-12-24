@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -47,6 +49,7 @@ public class UserController {
     @GetMapping("/{userId}/profile")
     @Operation(summary = "Get user profile by ID",
     description = "Get user profile by specified user's ID ")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<UserProfileResponse> getUserProfileById(
             @PathVariable UUID userId){
         UserProfileResponse response = userService.getUserProfileById(userId);
@@ -67,6 +70,7 @@ public class UserController {
     @PutMapping("/{userId}/profile/update")
     @Operation(summary = "Update user profile by ID",
     description = "Update user profile by specified ID")
+    @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<UserProfileResponse> updateUserProfileById(
             @PathVariable UUID userId,
