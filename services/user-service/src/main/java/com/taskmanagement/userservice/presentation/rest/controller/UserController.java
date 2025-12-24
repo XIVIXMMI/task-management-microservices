@@ -2,6 +2,7 @@ package com.taskmanagement.userservice.presentation.rest.controller;
 
 import com.taskmanagement.userservice.application.dto.ChangePasswordRequest;
 import com.taskmanagement.userservice.application.dto.MessageResponse;
+import com.taskmanagement.userservice.application.dto.UpdateProfileRequest;
 import com.taskmanagement.userservice.application.dto.UserProfileResponse;
 import com.taskmanagement.userservice.application.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,8 +53,31 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @PutMapping("/me/update")
+    @Operation(summary = "Update current user profile",
+    description = "Update profile for authenticated user")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<UserProfileResponse> updateCurrentUserProfile(
+            @Valid @RequestBody UpdateProfileRequest request
+            ) {
+        UserProfileResponse response = userService.updateUserProfile(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{userId}/profile/update")
+    @Operation(summary = "Update user profile by ID",
+    description = "Update user profile by specified ID")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<UserProfileResponse> updateUserProfileById(
+            @PathVariable UUID userId,
+            @Valid @RequestBody UpdateProfileRequest request
+    ) {
+        UserProfileResponse response = userService.updateUserProfileById(userId,request);
+        return ResponseEntity.ok(response);
+    }
+
+
     /*
-    - PUT /users/{userId}/profile (update profile)
     - POST /users/{userId}/profile/avatar (upload photo)
     - DELETE /users/{userId}/profile/avatar
 

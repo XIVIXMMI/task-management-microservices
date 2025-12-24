@@ -1,6 +1,7 @@
 package com.taskmanagement.userservice.application.service;
 
 import com.taskmanagement.userservice.application.dto.ChangePasswordRequest;
+import com.taskmanagement.userservice.application.dto.UpdateProfileRequest;
 import com.taskmanagement.userservice.application.dto.UserProfileResponse;
 import com.taskmanagement.userservice.domain.entity.Profile;
 import com.taskmanagement.userservice.domain.entity.User;
@@ -18,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -72,6 +72,29 @@ public class UserServiceImpl implements UserService {
         return UserProfileResponse.from(user,profile);
     }
 
+    @Override
+    @Transactional
+    public UserProfileResponse updateUserProfile(UpdateProfileRequest request) {
+        UUID userId = getUuid();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        Profile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException("Profile not found"));
+        updateProfileFields(profile,request);
+        profileRepository.save(profile);
+        return UserProfileResponse.from(user,profile);
+    }
+
+    @Override
+    public UserProfileResponse updateUserProfileById(UUID userId, UpdateProfileRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        Profile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException("Profile not found"));
+        updateProfileFields(profile,request);
+        profileRepository.save(profile);
+        return UserProfileResponse.from(user,profile);
+    }
 
 
     /*
@@ -91,4 +114,11 @@ public class UserServiceImpl implements UserService {
         return userDetails.getId();
     }
 
+    private void updateProfileFields(Profile profile, UpdateProfileRequest request){
+        if(request.firstName() != null) profile.setFirstName(request.firstName());
+        if(request.lastName() != null) profile.setLastName(request.lastName());
+        if(request.dateOfBirth() != null) profile.setDateOfBirth(request.dateOfBirth());
+        if(request.gender() != null) profile.setGender(request.gender());
+        if(request.bio() != null) profile.setBio(request.bio());
+    }
 }
