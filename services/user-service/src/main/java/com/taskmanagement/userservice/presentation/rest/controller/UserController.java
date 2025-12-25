@@ -2,16 +2,20 @@ package com.taskmanagement.userservice.presentation.rest.controller;
 
 import com.taskmanagement.userservice.application.dto.ChangePasswordRequest;
 import com.taskmanagement.userservice.application.dto.MessageResponse;
+import com.taskmanagement.userservice.application.dto.UpdateProfileRequest;
 import com.taskmanagement.userservice.application.dto.UserProfileResponse;
 import com.taskmanagement.userservice.application.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,9 +46,42 @@ public class UserController {
         return ResponseEntity.ok(new MessageResponse("Password changed successfully"));
     }
 
+    @GetMapping("/{userId}/profile")
+    @Operation(summary = "Get user profile by ID",
+    description = "Get user profile by specified user's ID ")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<UserProfileResponse> getUserProfileById(
+            @PathVariable UUID userId){
+        UserProfileResponse response = userService.getUserProfileById(userId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/me/update")
+    @Operation(summary = "Update current user profile",
+    description = "Update profile for authenticated user")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<UserProfileResponse> updateCurrentUserProfile(
+            @Valid @RequestBody UpdateProfileRequest request
+            ) {
+        UserProfileResponse response = userService.updateUserProfile(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{userId}/profile/update")
+    @Operation(summary = "Update user profile by ID",
+    description = "Update user profile by specified ID")
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<UserProfileResponse> updateUserProfileById(
+            @PathVariable UUID userId,
+            @Valid @RequestBody UpdateProfileRequest request
+    ) {
+        UserProfileResponse response = userService.updateUserProfileById(userId,request);
+        return ResponseEntity.ok(response);
+    }
+
+
     /*
-    - GET /users/{userId}/profile
-    - PUT /users/{userId}/profile (update profile)
     - POST /users/{userId}/profile/avatar (upload photo)
     - DELETE /users/{userId}/profile/avatar
 

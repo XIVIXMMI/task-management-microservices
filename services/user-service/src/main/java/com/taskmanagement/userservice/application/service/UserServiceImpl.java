@@ -1,6 +1,7 @@
 package com.taskmanagement.userservice.application.service;
 
 import com.taskmanagement.userservice.application.dto.ChangePasswordRequest;
+import com.taskmanagement.userservice.application.dto.UpdateProfileRequest;
 import com.taskmanagement.userservice.application.dto.UserProfileResponse;
 import com.taskmanagement.userservice.domain.entity.Profile;
 import com.taskmanagement.userservice.domain.entity.User;
@@ -18,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -63,6 +63,40 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    public UserProfileResponse getUserProfileById(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        Profile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
+        return UserProfileResponse.from(user,profile);
+    }
+
+    @Override
+    @Transactional
+    public UserProfileResponse updateUserProfile(UpdateProfileRequest request) {
+        UUID userId = getUuid();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        Profile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
+        updateProfileFields(profile,request);
+        profileRepository.save(profile);
+        return UserProfileResponse.from(user,profile);
+    }
+
+    @Override
+    @Transactional
+    public UserProfileResponse updateUserProfileById(UUID userId, UpdateProfileRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        Profile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
+        updateProfileFields(profile,request);
+        profileRepository.save(profile);
+        return UserProfileResponse.from(user,profile);
+    }
+
 
     /*
     ====== UTILITY METHODS ======
@@ -71,7 +105,7 @@ public class UserServiceImpl implements UserService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         // defensive programming
         if( auth == null || !auth.isAuthenticated()){
-            throw new UnauthorizedException("User no authenticated");
+            throw new UnauthorizedException("User not authenticated");
         }
         Object principal = auth.getPrincipal();
         // except edge case anonymous user
@@ -81,4 +115,11 @@ public class UserServiceImpl implements UserService {
         return userDetails.getId();
     }
 
+    private void updateProfileFields(Profile profile, UpdateProfileRequest request){
+        if(request.firstName() != null) profile.setFirstName(request.firstName());
+        if(request.lastName() != null) profile.setLastName(request.lastName());
+        if(request.dateOfBirth() != null) profile.setDateOfBirth(request.dateOfBirth());
+        if(request.gender() != null) profile.setGender(request.gender());
+        if(request.bio() != null) profile.setBio(request.bio());
+    }
 }

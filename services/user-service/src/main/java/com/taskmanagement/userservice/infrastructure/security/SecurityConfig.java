@@ -47,7 +47,7 @@ public class SecurityConfig {
                         "/api/v1/auth/**",
                         "/api/health",
                         "/actuator/health",
-                        "/actuator/info"
+                        "/actuator/info", "/api/v1/users/{userId}/profile"
                         )
                         .permitAll()
                         .anyRequest()

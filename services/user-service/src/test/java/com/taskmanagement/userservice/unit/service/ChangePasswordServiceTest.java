@@ -170,7 +170,7 @@ public class ChangePasswordServiceTest {
         when(securityContext.getAuthentication()).thenReturn(null);
         assertThatThrownBy(() -> userService.changePassword(validRequest))
                 .isInstanceOf(UnauthorizedException.class)
-                .hasMessage("User no authenticated");
+                .hasMessage("User not authenticated");
 
         verify(userRepository, never()).findById(any());
     }
@@ -184,7 +184,7 @@ public class ChangePasswordServiceTest {
         when(authentication.isAuthenticated()).thenReturn(false);
         assertThatThrownBy(() -> userService.changePassword(validRequest))
                 .isInstanceOf(UnauthorizedException.class)
-                .hasMessage("User no authenticated");
+                .hasMessage("User not authenticated");
 
         verify(userRepository, never()).findById(any());
     }
